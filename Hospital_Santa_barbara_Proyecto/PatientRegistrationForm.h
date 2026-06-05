@@ -50,6 +50,7 @@ namespace HospitalSantabarbaraProyecto {
 		System::Windows::Forms::TextBox^ textBoxContrasena;
 		System::Windows::Forms::Button^ buttonGuardar;
 		System::Windows::Forms::Button^ buttonCancelar;
+		System::Windows::Forms::Button^ buttonVolver;
 		System::Windows::Forms::Label^ labelError;
 
 		System::ComponentModel::Container^ components;
@@ -73,6 +74,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->textBoxContrasena = (gcnew System::Windows::Forms::TextBox());
 			this->buttonGuardar = (gcnew System::Windows::Forms::Button());
 			this->buttonCancelar = (gcnew System::Windows::Forms::Button());
+			this->buttonVolver = (gcnew System::Windows::Forms::Button());
 			this->labelError = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 
@@ -228,20 +230,32 @@ namespace HospitalSantabarbaraProyecto {
 			this->buttonGuardar->ForeColor = System::Drawing::Color::White;
 			this->buttonGuardar->Location = System::Drawing::Point(150, 550);
 			this->buttonGuardar->Name = L"buttonGuardar";
-			this->buttonGuardar->Size = System::Drawing::Size(200, 45);
+			this->buttonGuardar->Size = System::Drawing::Size(180, 45);
 			this->buttonGuardar->TabIndex = 6;
 			this->buttonGuardar->Text = L"Guardar y Continuar";
 			this->buttonGuardar->UseVisualStyleBackColor = false;
 			this->buttonGuardar->Click += gcnew System::EventHandler(this, &PatientRegistrationForm::buttonGuardar_Click);
 
+			// buttonVolver
+			this->buttonVolver->BackColor = System::Drawing::Color::FromArgb(100, 100, 100);
+			this->buttonVolver->Font = (gcnew System::Drawing::Font(L"Arial", 11, System::Drawing::FontStyle::Bold));
+			this->buttonVolver->ForeColor = System::Drawing::Color::White;
+			this->buttonVolver->Location = System::Drawing::Point(350, 550);
+			this->buttonVolver->Name = L"buttonVolver";
+			this->buttonVolver->Size = System::Drawing::Size(120, 45);
+			this->buttonVolver->TabIndex = 7;
+			this->buttonVolver->Text = L"Volver";
+			this->buttonVolver->UseVisualStyleBackColor = false;
+			this->buttonVolver->Click += gcnew System::EventHandler(this, &PatientRegistrationForm::buttonVolver_Click);
+
 			// buttonCancelar
 			this->buttonCancelar->BackColor = System::Drawing::Color::FromArgb(204, 0, 0);
 			this->buttonCancelar->Font = (gcnew System::Drawing::Font(L"Arial", 11, System::Drawing::FontStyle::Bold));
 			this->buttonCancelar->ForeColor = System::Drawing::Color::White;
-			this->buttonCancelar->Location = System::Drawing::Point(400, 550);
+			this->buttonCancelar->Location = System::Drawing::Point(480, 550);
 			this->buttonCancelar->Name = L"buttonCancelar";
-			this->buttonCancelar->Size = System::Drawing::Size(200, 45);
-			this->buttonCancelar->TabIndex = 7;
+			this->buttonCancelar->Size = System::Drawing::Size(120, 45);
+			this->buttonCancelar->TabIndex = 8;
 			this->buttonCancelar->Text = L"Cancelar";
 			this->buttonCancelar->UseVisualStyleBackColor = false;
 			this->buttonCancelar->Click += gcnew System::EventHandler(this, &PatientRegistrationForm::buttonCancelar_Click);
@@ -253,6 +267,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->ClientSize = System::Drawing::Size(800, 650);
 			this->Controls->Add(this->labelError);
 			this->Controls->Add(this->buttonCancelar);
+			this->Controls->Add(this->buttonVolver);
 			this->Controls->Add(this->buttonGuardar);
 			this->Controls->Add(this->textBoxContrasena);
 			this->Controls->Add(this->labelContrasena);
@@ -334,6 +349,10 @@ namespace HospitalSantabarbaraProyecto {
 		}
 
 		System::Void buttonCancelar_Click(System::Object^ sender, System::EventArgs^ e) {
+			this->Close();
+		}
+
+		System::Void buttonVolver_Click(System::Object^ sender, System::EventArgs^ e) {
 			this->Close();
 		}
 	};

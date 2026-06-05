@@ -109,91 +109,6 @@ namespace HospitalSantabarbaraProyecto {
 			enf2->contrasena = L"1234";
 			enfermeros->Add(enf2);
 
-			// Pacientes predefinidos
-			Patient^ pac1 = gcnew Patient();
-			pac1->id = L"PAC001";
-			pac1->nombre = L"Antonio Martinez";
-			pac1->email = L"antonio@email.com";
-			pac1->telefono = L"555-1234";
-			pac1->direccion = L"Calle Principal 123";
-			pac1->contrasena = L"1234";
-			pacientes->Add(pac1);
-
-			Patient^ pac2 = gcnew Patient();
-			pac2->id = L"PAC002";
-			pac2->nombre = L"Maria Gonzalez";
-			pac2->email = L"maria@email.com";
-			pac2->telefono = L"555-5678";
-			pac2->direccion = L"Avenida Central 456";
-			pac2->contrasena = L"1234";
-			pacientes->Add(pac2);
-
-			// Citas de ejemplo
-			Appointment^ cita1 = gcnew Appointment();
-			cita1->idPaciente = L"PAC001";
-			cita1->nombrePaciente = L"Antonio Martinez";
-			cita1->doctor = L"Dr. Carlos Rodriguez";
-			cita1->fecha = L"2024-01-15";
-			cita1->hora = L"10:00 AM";
-			cita1->razon = L"Revisión de salud";
-			citas->Add(cita1);
-
-			Appointment^ cita2 = gcnew Appointment();
-			cita2->idPaciente = L"PAC002";
-			cita2->nombrePaciente = L"Maria Gonzalez";
-			cita2->doctor = L"Dra. Maria Lopez";
-			cita2->fecha = L"2024-01-16";
-			cita2->hora = L"02:30 PM";
-			cita2->razon = L"Control de rutina";
-			citas->Add(cita2);
-
-			// Recetas de ejemplo
-			Recipe^ rec1 = gcnew Recipe();
-			rec1->idPaciente = L"PAC001";
-			rec1->nombrePaciente = L"Antonio Martinez";
-			rec1->medicamentos = L"Paracetamol";
-			rec1->dosis = L"500mg cada 8 horas";
-			rec1->indicaciones = L"Tomar después de las comidas";
-			rec1->fecha = L"2024-01-10";
-			recetas->Add(rec1);
-
-			Recipe^ rec2 = gcnew Recipe();
-			rec2->idPaciente = L"PAC002";
-			rec2->nombrePaciente = L"Maria Gonzalez";
-			rec2->medicamentos = L"Amoxicilina";
-			rec2->dosis = L"250mg cada 6 horas";
-			rec2->indicaciones = L"Completar el ciclo de 10 días";
-			rec2->fecha = L"2024-01-12";
-			recetas->Add(rec2);
-
-			// Historial médico de ejemplo
-			MedicalHistory^ hist1 = gcnew MedicalHistory();
-			hist1->idPaciente = L"PAC001";
-			hist1->nombrePaciente = L"Antonio Martinez";
-			hist1->diagnostico = L"Gripe común";
-			hist1->tratamiento = L"Reposo y medicamentos";
-			hist1->fecha = L"2024-01-05";
-			hist1->doctor = L"Dr. Carlos Rodriguez";
-			historialMedico->Add(hist1);
-
-			MedicalHistory^ hist2 = gcnew MedicalHistory();
-			hist2->idPaciente = L"PAC001";
-			hist2->nombrePaciente = L"Antonio Martinez";
-			hist2->diagnostico = L"Hipertensión leve";
-			hist2->tratamiento = L"Cambios en la dieta y ejercicio";
-			hist2->fecha = L"2023-12-20";
-			hist2->doctor = L"Dr. Carlos Rodriguez";
-			historialMedico->Add(hist2);
-
-			MedicalHistory^ hist3 = gcnew MedicalHistory();
-			hist3->idPaciente = L"PAC002";
-			hist3->nombrePaciente = L"Maria Gonzalez";
-			hist3->diagnostico = L"Infección respiratoria";
-			hist3->tratamiento = L"Antibióticos y reposo";
-			hist3->fecha = L"2024-01-08";
-			hist3->doctor = L"Dra. Maria Lopez";
-			historialMedico->Add(hist3);
-
 			// Cargar pacientes guardados
 			CargarPacientes();
 		}
@@ -252,19 +167,27 @@ namespace HospitalSantabarbaraProyecto {
 			try {
 				String^ rutaArchivo = System::IO::Path::Combine(
 					System::IO::Path::GetDirectoryName(System::Reflection::Assembly::GetExecutingAssembly()->Location),
-					L"pacientes.txt"
+					L"pacientes.dat"
 				);
 
 				System::IO::StreamWriter^ writer = gcnew System::IO::StreamWriter(rutaArchivo, false, System::Text::Encoding::UTF8);
 				for each (Patient^ p in pacientes) {
-					String^ linea = p->id + L"|" + p->nombre + L"|" + p->email + L"|" + p->telefono + L"|" + p->direccion + L"|" + p->contrasena;
+					// Escapar caracteres especiales usando tokens que no contienen el separador '|'
+					String^ id = (p->id == nullptr) ? L"" : p->id->Replace(L"<PIPE>", L"<PIPE_ESC>")->Replace(L"|", L"<PIPE>");
+					String^ nombre = (p->nombre == nullptr) ? L"" : p->nombre->Replace(L"<PIPE>", L"<PIPE_ESC>")->Replace(L"|", L"<PIPE>");
+					String^ email = (p->email == nullptr) ? L"" : p->email->Replace(L"<PIPE>", L"<PIPE_ESC>")->Replace(L"|", L"<PIPE>");
+					String^ telefono = (p->telefono == nullptr) ? L"" : p->telefono->Replace(L"<PIPE>", L"<PIPE_ESC>")->Replace(L"|", L"<PIPE>");
+					String^ direccion = (p->direccion == nullptr) ? L"" : p->direccion->Replace(L"<PIPE>", L"<PIPE_ESC>")->Replace(L"|", L"<PIPE>");
+					String^ contrasena = (p->contrasena == nullptr) ? L"" : p->contrasena->Replace(L"<PIPE>", L"<PIPE_ESC>")->Replace(L"|", L"<PIPE>");
+
+					String^ linea = id + L"|" + nombre + L"|" + email + L"|" + telefono + L"|" + direccion + L"|" + contrasena;
 					writer->WriteLine(linea);
 				}
 				writer->Close();
 				delete writer;
 			}
 			catch (System::Exception^ ex) {
-				System::Windows::Forms::MessageBox::Show(L"Error al guardar: " + ex->Message);
+				// Silencio en caso de error
 			}
 		}
 
@@ -272,7 +195,7 @@ namespace HospitalSantabarbaraProyecto {
 			try {
 				String^ rutaArchivo = System::IO::Path::Combine(
 					System::IO::Path::GetDirectoryName(System::Reflection::Assembly::GetExecutingAssembly()->Location),
-					L"pacientes.txt"
+					L"pacientes.dat"
 				);
 
 				if (System::IO::File::Exists(rutaArchivo)) {
@@ -280,19 +203,28 @@ namespace HospitalSantabarbaraProyecto {
 					String^ linea = L"";
 
 					while ((linea = reader->ReadLine()) != nullptr) {
-						array<String^>^ partes = linea->Split('|');
-						if (partes->Length == 6) {
-							Patient^ p = gcnew Patient();
-							p->id = partes[0];
-							p->nombre = partes[1];
-							p->email = partes[2];
-							p->telefono = partes[3];
-							p->direccion = partes[4];
-							p->contrasena = partes[5];
+						if (linea->Length > 0) {
+							array<String^>^ partes = linea->Split('|');
+							if (partes->Length == 6) {
+								// Desescapar tokens en el orden correcto
+								String^ id = partes[0]->Replace(L"<PIPE_ESC>", L"<PIPE>")->Replace(L"<PIPE>", L"|");
+								String^ nombre = partes[1]->Replace(L"<PIPE_ESC>", L"<PIPE>")->Replace(L"<PIPE>", L"|");
+								String^ email = partes[2]->Replace(L"<PIPE_ESC>", L"<PIPE>")->Replace(L"<PIPE>", L"|");
+								String^ telefono = partes[3]->Replace(L"<PIPE_ESC>", L"<PIPE>")->Replace(L"<PIPE>", L"|");
+								String^ direccion = partes[4]->Replace(L"<PIPE_ESC>", L"<PIPE>")->Replace(L"<PIPE>", L"|");
+								String^ contrasena = partes[5]->Replace(L"<PIPE_ESC>", L"<PIPE>")->Replace(L"<PIPE>", L"|");
 
-							// Verificar que no exista ya
-							if (BuscarPaciente(p->id) == nullptr) {
-								pacientes->Add(p);
+								// Verificar que no exista ya antes de agregar
+								if (BuscarPaciente(id) == nullptr) {
+									Patient^ p = gcnew Patient();
+									p->id = id;
+									p->nombre = nombre;
+									p->email = email;
+									p->telefono = telefono;
+									p->direccion = direccion;
+									p->contrasena = contrasena;
+									pacientes->Add(p);
+								}
 							}
 						}
 					}
@@ -301,7 +233,7 @@ namespace HospitalSantabarbaraProyecto {
 				}
 			}
 			catch (System::Exception^ ex) {
-				System::Windows::Forms::MessageBox::Show(L"Error al cargar: " + ex->Message);
+				// Silencio en caso de error
 			}
 		}
 	};
