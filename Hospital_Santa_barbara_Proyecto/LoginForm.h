@@ -1,10 +1,13 @@
-#pragma once
+﻿#pragma once
+// UTF-8 encoding directive
+#pragma execution_character_set("utf-8")
 
 #include "EmployeeData.h"
 #include "RoleSelectionForm.h"
 #include "DoctorMainForm.h"
 #include "NurseMainForm.h"
 #include "PatientMainForm.h"
+#include "PatientRegistrationForm.h"
 
 namespace HospitalSantabarbaraProyecto {
 
@@ -21,6 +24,9 @@ namespace HospitalSantabarbaraProyecto {
 		LoginForm(void)
 		{
 			InitializeComponent();
+			this->textBoxID->Clear();
+			this->textBoxPassword->Clear();
+			this->textBoxID->Focus();
 		}
 
 	protected:
@@ -95,7 +101,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->labelID->Name = L"labelID";
 			this->labelID->Size = System::Drawing::Size(32, 23);
 			this->labelID->TabIndex = 2;
-			this->labelID->Text = L"ID:";
+			this->labelID->Text = L"ID";
 
 			// textBoxID
 			this->textBoxID->BackColor = System::Drawing::Color::White;
@@ -116,7 +122,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->labelPassword->Name = L"labelPassword";
 			this->labelPassword->Size = System::Drawing::Size(103, 23);
 			this->labelPassword->TabIndex = 3;
-			this->labelPassword->Text = L"Contraseña:";
+			this->labelPassword->Text = L"Contraseña";
 
 			// textBoxPassword
 			this->textBoxPassword->BackColor = System::Drawing::Color::White;
@@ -192,9 +198,26 @@ namespace HospitalSantabarbaraProyecto {
 			String^ id = this->textBoxID->Text->Trim();
 			String^ contrasena = this->textBoxPassword->Text;
 
+			// Validación de campos vacíos
 			if (id->Length == 0 || contrasena->Length == 0) {
 				this->labelError->Text = L"Por favor complete todos los campos";
 				this->labelError->ForeColor = System::Drawing::Color::Red;
+				this->textBoxID->Focus();
+				return;
+			}
+
+			// Validación de longitud mínima
+			if (id->Length < 3) {
+				this->labelError->Text = L"El ID debe tener al menos 3 caracteres";
+				this->labelError->ForeColor = System::Drawing::Color::Red;
+				this->textBoxID->Focus();
+				return;
+			}
+
+			if (contrasena->Length < 4) {
+				this->labelError->Text = L"La contraseña debe tener al menos 4 caracteres";
+				this->labelError->ForeColor = System::Drawing::Color::Red;
+				this->textBoxPassword->Focus();
 				return;
 			}
 
@@ -222,7 +245,7 @@ namespace HospitalSantabarbaraProyecto {
 				return;
 			}
 
-			// Verificar si es Paciente
+			// Verificar si es Paciente registrado
 			Patient^ paciente = HospitalData::BuscarPaciente(id);
 			if (paciente != nullptr && HospitalData::AutenticarPaciente(id, contrasena)) {
 				HospitalData::usuarioActual = id;
@@ -234,14 +257,33 @@ namespace HospitalSantabarbaraProyecto {
 				return;
 			}
 
-			// Si no existe, crear como paciente temporal
-			HospitalData::CrearPacienteTemporal(id, contrasena);
-			HospitalData::usuarioActual = id;
-			HospitalData::rolActual = L"Paciente";
+			// Si no existe paciente, mostrar diálogo para registrarse
+			if (paciente == nullptr) {
+				System::Windows::Forms::DialogResult resultado = MessageBox::Show(
+					L"El usuario no existe. ¿Desea registrarse como nuevo paciente?",
+					L"Usuario No Registrado",
+					System::Windows::Forms::MessageBoxButtons::YesNo,
+					System::Windows::Forms::MessageBoxIcon::Question
+				);
 
-			PatientMainForm^ newPatientForm = gcnew PatientMainForm();
-			this->Hide();
-			newPatientForm->Show();
+				if (resultado == System::Windows::Forms::DialogResult::Yes) {
+					PatientRegistrationForm^ registrationForm = gcnew PatientRegistrationForm(id);
+					registrationForm->ShowDialog();
+					this->textBoxPassword->Clear();
+					return;
+				}
+				else {
+					this->labelError->Text = L"Por favor ingrese credenciales válidas";
+					this->labelError->ForeColor = System::Drawing::Color::Red;
+					this->textBoxPassword->Clear();
+					return;
+				}
+			}
+
+			// Si existe pero contraseña es incorrecta
+			this->labelError->Text = L"Credenciales inválidas. Intente nuevamente.";
+			this->labelError->ForeColor = System::Drawing::Color::Red;
+			this->textBoxPassword->Clear();
 		}
 
 		System::Void buttonSalir_Click(System::Object^ sender, System::EventArgs^ e) {

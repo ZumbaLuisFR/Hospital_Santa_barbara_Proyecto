@@ -33,6 +33,12 @@
     <ClInclude Include="RoleSelectionForm.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="PatientRegistrationForm.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="MedicalNotesForm.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp">
@@ -56,17 +62,8 @@
     <ClCompile Include="LoginForm.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="README.txt" />
-    <Text Include="INSTALACION.txt" />
-    <Text Include="ARQUITECTURA.txt" />
-    <Text Include="FUNCIONALIDADES.txt" />
-    <Text Include="DIAGRAMA_NAVEGACION.txt" />
-    <Text Include="GUIA_RAPIDA.txt" />
-    <Text Include="COMO_CREAR_PROYECTO.txt" />
-    <Text Include="INDEX.txt" />
-    <Text Include="PROYECTO_COMPLETO.txt" />
-    <Text Include="ENTREGA_FINAL.txt" />
+    <ClCompile Include="PatientRegistrationForm.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

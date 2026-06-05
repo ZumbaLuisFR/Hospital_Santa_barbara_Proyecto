@@ -4,4 +4,5 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="Hospital_Santa_barbara_Proyecto/Hospital_Santa_barbara_Proyecto.vcxproj" />
+  <Project Path="Santa Barbara/Santa Barbara.vdproj" Type="Installer" />
 </Solution>

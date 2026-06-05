@@ -1,6 +1,9 @@
-#pragma once
+﻿#pragma once
+// UTF-8 encoding directive
+#pragma execution_character_set("utf-8")
 
 #include "EmployeeData.h"
+#include "MedicalNotesForm.h"
 
 namespace HospitalSantabarbaraProyecto {
 
@@ -36,6 +39,7 @@ namespace HospitalSantabarbaraProyecto {
 		System::Windows::Forms::Panel^ panelSidebar;
 		System::Windows::Forms::Button^ buttonPacientes;
 		System::Windows::Forms::Button^ buttonHistorial;
+		System::Windows::Forms::Button^ buttonNotas;
 		System::Windows::Forms::Button^ buttonDiagnostico;
 		System::Windows::Forms::Button^ buttonTratamiento;
 		System::Windows::Forms::Button^ buttonRecetas;
@@ -43,6 +47,7 @@ namespace HospitalSantabarbaraProyecto {
 		System::Windows::Forms::Panel^ panelContent;
 		System::Windows::Forms::ListBox^ listBoxPacientes;
 		System::Windows::Forms::Label^ labelContentTitle;
+		System::Windows::Forms::Button^ buttonAbrirNotas;
 
 		System::ComponentModel::Container^ components;
 
@@ -56,6 +61,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->panelSidebar = (gcnew System::Windows::Forms::Panel());
 			this->buttonPacientes = (gcnew System::Windows::Forms::Button());
 			this->buttonHistorial = (gcnew System::Windows::Forms::Button());
+			this->buttonNotas = (gcnew System::Windows::Forms::Button());
 			this->buttonDiagnostico = (gcnew System::Windows::Forms::Button());
 			this->buttonTratamiento = (gcnew System::Windows::Forms::Button());
 			this->buttonRecetas = (gcnew System::Windows::Forms::Button());
@@ -63,6 +69,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->panelContent = (gcnew System::Windows::Forms::Panel());
 			this->listBoxPacientes = (gcnew System::Windows::Forms::ListBox());
 			this->labelContentTitle = (gcnew System::Windows::Forms::Label());
+			this->buttonAbrirNotas = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 
 			// panelHeader
@@ -130,12 +137,21 @@ namespace HospitalSantabarbaraProyecto {
 			this->buttonHistorial->Click += gcnew System::EventHandler(this, &DoctorMainForm::buttonHistorial_Click);
 			this->panelSidebar->Controls->Add(this->buttonHistorial);
 
+			this->buttonNotas->BackColor = System::Drawing::Color::FromArgb(51, 102, 153);
+			this->buttonNotas->ForeColor = System::Drawing::Color::White;
+			this->buttonNotas->Font = (gcnew System::Drawing::Font(L"Arial", 11));
+			this->buttonNotas->Location = System::Drawing::Point(0, 130);
+			this->buttonNotas->Size = System::Drawing::Size(200, 50);
+			this->buttonNotas->Text = L"Notas Médicas";
+			this->buttonNotas->Click += gcnew System::EventHandler(this, &DoctorMainForm::buttonNotas_Click);
+			this->panelSidebar->Controls->Add(this->buttonNotas);
+
 			this->buttonDiagnostico->BackColor = System::Drawing::Color::FromArgb(51, 102, 153);
 			this->buttonDiagnostico->ForeColor = System::Drawing::Color::White;
 			this->buttonDiagnostico->Font = (gcnew System::Drawing::Font(L"Arial", 11));
-			this->buttonDiagnostico->Location = System::Drawing::Point(0, 130);
+			this->buttonDiagnostico->Location = System::Drawing::Point(0, 190);
 			this->buttonDiagnostico->Size = System::Drawing::Size(200, 50);
-			this->buttonDiagnostico->Text = L"Registrar Diagnóstico";
+			this->buttonDiagnostico->Text = L"Diagnóstico";
 			this->buttonDiagnostico->Click += gcnew System::EventHandler(this, &DoctorMainForm::buttonDiagnostico_Click);
 			this->panelSidebar->Controls->Add(this->buttonDiagnostico);
 
@@ -190,8 +206,18 @@ namespace HospitalSantabarbaraProyecto {
 				this->listBoxPacientes->Items->Add(p->nombre + L" (ID: " + p->id + L")");
 			}
 
+			// buttonAbrirNotas
+			this->buttonAbrirNotas->BackColor = System::Drawing::Color::FromArgb(0, 153, 76);
+			this->buttonAbrirNotas->Font = (gcnew System::Drawing::Font(L"Arial", 11, System::Drawing::FontStyle::Bold));
+			this->buttonAbrirNotas->ForeColor = System::Drawing::Color::White;
+			this->buttonAbrirNotas->Location = System::Drawing::Point(20, 380);
+			this->buttonAbrirNotas->Size = System::Drawing::Size(250, 45);
+			this->buttonAbrirNotas->Text = L"Abrir Notas Médicas";
+			this->buttonAbrirNotas->Click += gcnew System::EventHandler(this, &DoctorMainForm::buttonAbrirNotas_Click);
+
 			this->panelContent->Controls->Add(this->labelContentTitle);
 			this->panelContent->Controls->Add(this->listBoxPacientes);
+			this->panelContent->Controls->Add(this->buttonAbrirNotas);
 
 			// DoctorMainForm
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -224,6 +250,29 @@ namespace HospitalSantabarbaraProyecto {
 			for each (MedicalHistory^ h in HospitalData::historialMedico) {
 				this->listBoxPacientes->Items->Add(h->nombrePaciente + L": " + h->diagnostico);
 			}
+		}
+
+		System::Void buttonNotas_Click(System::Object^ sender, System::EventArgs^ e) {
+			this->listBoxPacientes->Items->Clear();
+			this->labelContentTitle->Text = L"Seleccionar Paciente - Notas Médicas";
+			for each (Patient^ p in HospitalData::pacientes) {
+				this->listBoxPacientes->Items->Add(p->nombre + L" (ID: " + p->id + L")");
+			}
+		}
+
+		System::Void buttonAbrirNotas_Click(System::Object^ sender, System::EventArgs^ e) {
+			if (this->listBoxPacientes->SelectedIndex == -1) {
+				MessageBox::Show(L"Por favor selecciona un paciente", L"Selecciona Paciente");
+				return;
+			}
+
+			String^ selectedItem = this->listBoxPacientes->SelectedItem->ToString();
+			int startIndex = selectedItem->LastIndexOf(L"ID: ") + 4;
+			int endIndex = selectedItem->LastIndexOf(L")");
+			String^ pacienteID = selectedItem->Substring(startIndex, endIndex - startIndex);
+
+			MedicalNotesForm^ notesForm = gcnew MedicalNotesForm(pacienteID);
+			notesForm->ShowDialog();
 		}
 
 		System::Void buttonDiagnostico_Click(System::Object^ sender, System::EventArgs^ e) {

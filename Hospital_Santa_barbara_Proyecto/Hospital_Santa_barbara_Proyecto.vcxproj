@@ -29,8 +29,10 @@
     <ClInclude Include="DoctorMainForm.h" />
     <ClInclude Include="EmployeeData.h" />
     <ClInclude Include="LoginForm.h" />
+    <ClInclude Include="MedicalNotesForm.h" />
     <ClInclude Include="NurseMainForm.h" />
     <ClInclude Include="PatientMainForm.h" />
+    <ClInclude Include="PatientRegistrationForm.h" />
     <ClInclude Include="RoleSelectionForm.h" />
   </ItemGroup>
   <ItemGroup>
@@ -39,20 +41,9 @@
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="NurseMainForm.cpp" />
     <ClCompile Include="PatientMainForm.cpp" />
+    <ClCompile Include="PatientRegistrationForm.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="RoleSelectionForm.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ARQUITECTURA.txt" />
-    <Text Include="COMO_CREAR_PROYECTO.txt" />
-    <Text Include="DIAGRAMA_NAVEGACION.txt" />
-    <Text Include="ENTREGA_FINAL.txt" />
-    <Text Include="FUNCIONALIDADES.txt" />
-    <Text Include="GUIA_RAPIDA.txt" />
-    <Text Include="INDEX.txt" />
-    <Text Include="INSTALACION.txt" />
-    <Text Include="PROYECTO_COMPLETO.txt" />
-    <Text Include="README.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

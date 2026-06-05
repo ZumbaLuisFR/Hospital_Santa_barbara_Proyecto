@@ -1,3 +1,5 @@
+﻿// UTF-8 encoding directive
+#pragma execution_character_set("utf-8")
 #include "LoginForm.h"
 
 using namespace System;

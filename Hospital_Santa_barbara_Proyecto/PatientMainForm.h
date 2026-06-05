@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+// UTF-8 encoding directive
+#pragma execution_character_set("utf-8")
 
 #include "EmployeeData.h"
 
@@ -219,6 +221,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->labelContentTitle->Text = L"Mis Datos";
 			Patient^ paciente = HospitalData::BuscarPaciente(HospitalData::usuarioActual);
 			if (paciente != nullptr) {
+				this->listBoxContent->Items->Add(L"ID: " + paciente->id);
 				this->listBoxContent->Items->Add(L"Nombre: " + paciente->nombre);
 				this->listBoxContent->Items->Add(L"Email: " + paciente->email);
 				this->listBoxContent->Items->Add(L"Teléfono: " + paciente->telefono);
@@ -241,7 +244,7 @@ namespace HospitalSantabarbaraProyecto {
 			this->labelContentTitle->Text = L"Mis Recetas";
 			for each (Recipe^ r in HospitalData::recetas) {
 				if (r->idPaciente == HospitalData::usuarioActual) {
-					this->listBoxContent->Items->Add(r->medicamentos + L" - " + r->dosis);
+					this->listBoxContent->Items->Add(r->medicamentos + L" - Dosis: " + r->dosis);
 				}
 			}
 		}
@@ -251,13 +254,13 @@ namespace HospitalSantabarbaraProyecto {
 			this->labelContentTitle->Text = L"Historial Médico";
 			for each (MedicalHistory^ h in HospitalData::historialMedico) {
 				if (h->idPaciente == HospitalData::usuarioActual) {
-					this->listBoxContent->Items->Add(h->diagnostico + L" - " + h->fecha);
+					this->listBoxContent->Items->Add(L"Fecha: " + h->fecha + L" - Diagnostico: " + h->diagnostico);
 				}
 			}
 		}
 
 		System::Void buttonSolicitarCita_Click(System::Object^ sender, System::EventArgs^ e) {
-			MessageBox::Show(L"Formulario para solicitar cita médica", L"Solicitar Cita");
+			MessageBox::Show(L"Por favor contacte al hospital para solicitar una cita", L"Solicitar Cita");
 		}
 
 		System::Void buttonCerrarSesion_Click(System::Object^ sender, System::EventArgs^ e) {
