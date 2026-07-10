@@ -2,12 +2,14 @@
 // UTF-8 encoding directive
 #pragma execution_character_set("utf-8")
 
+#include "AuthController.h"
 #include "EmployeeData.h"
 #include "RoleSelectionForm.h"
 #include "DoctorMainForm.h"
 #include "NurseMainForm.h"
 #include "PatientMainForm.h"
 #include "PatientRegistrationForm.h"
+#include "StaffRegistrationForm.h"
 
 namespace HospitalSantabarbaraProyecto {
 
@@ -23,6 +25,7 @@ namespace HospitalSantabarbaraProyecto {
 	public:
 		LoginForm(void)
 		{
+			cerrandoAplicacion = false;
 			InitializeComponent();
 			this->textBoxID->Clear();
 			this->textBoxPassword->Clear();
@@ -49,6 +52,7 @@ namespace HospitalSantabarbaraProyecto {
 		System::Windows::Forms::Button^ buttonSalir;
 		System::Windows::Forms::Label^ labelError;
 		System::Windows::Forms::PictureBox^ pictureBoxLogo;
+		bool cerrandoAplicacion;
 
 		System::ComponentModel::Container^ components;
 
@@ -198,78 +202,53 @@ namespace HospitalSantabarbaraProyecto {
 			String^ id = this->textBoxID->Text->Trim();
 			String^ contrasena = this->textBoxPassword->Text;
 
-			// Validación de campos vacíos
-			if (id->Length == 0 || contrasena->Length == 0) {
-				this->labelError->Text = L"Por favor complete todos los campos";
-				this->labelError->ForeColor = System::Drawing::Color::Red;
-				this->textBoxID->Focus();
-				return;
-			}
-
-			// Validación de longitud mínima
-			if (id->Length < 3) {
-				this->labelError->Text = L"El ID debe tener al menos 3 caracteres";
-				this->labelError->ForeColor = System::Drawing::Color::Red;
-				this->textBoxID->Focus();
-				return;
-			}
-
-			if (contrasena->Length < 4) {
-				this->labelError->Text = L"La contraseña debe tener al menos 4 caracteres";
-				this->labelError->ForeColor = System::Drawing::Color::Red;
-				this->textBoxPassword->Focus();
-				return;
-			}
-
-			// Verificar si es Doctor
-			if (HospitalData::AutenticarDoctor(id, contrasena)) {
-				HospitalData::usuarioActual = id;
-				HospitalData::rolActual = L"Doctor";
-				Doctor^ doc = HospitalData::BuscarDoctor(id);
-
+			LoginResponse^ respuesta = AuthController::IniciarSesion(id, contrasena);
+			if (respuesta->exitoso && respuesta->rol == L"Doctor") {
 				DoctorMainForm^ doctorForm = gcnew DoctorMainForm();
+				doctorForm->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &LoginForm::mainForm_FormClosed);
 				this->Hide();
 				doctorForm->Show();
 				return;
 			}
 
-			// Verificar si es Enfermero
-			if (HospitalData::AutenticarEnfermero(id, contrasena)) {
-				HospitalData::usuarioActual = id;
-				HospitalData::rolActual = L"Enfermero";
-				Nurse^ enf = HospitalData::BuscarEnfermero(id);
-
+			if (respuesta->exitoso && respuesta->rol == L"Enfermero") {
 				NurseMainForm^ nurseForm = gcnew NurseMainForm();
+				nurseForm->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &LoginForm::mainForm_FormClosed);
 				this->Hide();
 				nurseForm->Show();
 				return;
 			}
 
-			// Verificar si es Paciente registrado
-			Patient^ paciente = HospitalData::BuscarPaciente(id);
-			if (paciente != nullptr && HospitalData::AutenticarPaciente(id, contrasena)) {
-				HospitalData::usuarioActual = id;
-				HospitalData::rolActual = L"Paciente";
-
+			if (respuesta->exitoso && respuesta->rol == L"Paciente") {
 				PatientMainForm^ patientForm = gcnew PatientMainForm();
+				patientForm->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &LoginForm::mainForm_FormClosed);
 				this->Hide();
 				patientForm->Show();
 				return;
 			}
 
-			// Si no existe paciente, mostrar diálogo para registrarse
-			if (paciente == nullptr) {
+			if (respuesta->requiereRegistro) {
+				bool esDoctor = id->StartsWith(L"DOC", System::StringComparison::OrdinalIgnoreCase);
+				bool esEnfermero = id->StartsWith(L"ENF", System::StringComparison::OrdinalIgnoreCase);
+				String^ rolRegistro = esDoctor ? L"Doctor" : (esEnfermero ? L"Enfermero" : L"Paciente");
 				System::Windows::Forms::DialogResult resultado = MessageBox::Show(
-					L"El usuario no existe. ¿Desea registrarse como nuevo paciente?",
+					L"El usuario no existe. ¿Desea registrarse como " + rolRegistro + L"?",
 					L"Usuario No Registrado",
 					System::Windows::Forms::MessageBoxButtons::YesNo,
 					System::Windows::Forms::MessageBoxIcon::Question
 				);
 
 				if (resultado == System::Windows::Forms::DialogResult::Yes) {
-					PatientRegistrationForm^ registrationForm = gcnew PatientRegistrationForm(id);
-					registrationForm->ShowDialog();
+					if (esDoctor || esEnfermero) {
+						StaffRegistrationForm^ registrationForm = gcnew StaffRegistrationForm(id, rolRegistro);
+						registrationForm->ShowDialog();
+					}
+					else {
+						PatientRegistrationForm^ registrationForm = gcnew PatientRegistrationForm(id);
+						registrationForm->ShowDialog();
+					}
 					this->textBoxPassword->Clear();
+					this->textBoxID->Focus();
 					return;
 				}
 				else {
@@ -280,14 +259,26 @@ namespace HospitalSantabarbaraProyecto {
 				}
 			}
 
-			// Si existe pero contraseña es incorrecta
-			this->labelError->Text = L"Credenciales inválidas. Intente nuevamente.";
+			this->labelError->Text = respuesta->mensaje;
 			this->labelError->ForeColor = System::Drawing::Color::Red;
 			this->textBoxPassword->Clear();
 		}
 
 		System::Void buttonSalir_Click(System::Object^ sender, System::EventArgs^ e) {
+			cerrandoAplicacion = true;
 			Application::Exit();
+		}
+
+		System::Void mainForm_FormClosed(System::Object^ sender, System::Windows::Forms::FormClosedEventArgs^ e) {
+			if (cerrandoAplicacion || this->IsDisposed) return;
+
+			HospitalData::usuarioActual = L"";
+			HospitalData::rolActual = L"";
+			this->textBoxID->Clear();
+			this->textBoxPassword->Clear();
+			this->labelError->Text = L"";
+			this->Show();
+			this->textBoxID->Focus();
 		}
 	};
 }

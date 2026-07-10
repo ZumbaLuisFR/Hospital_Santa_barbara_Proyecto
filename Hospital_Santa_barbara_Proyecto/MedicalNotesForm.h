@@ -251,6 +251,7 @@ namespace HospitalSantabarbaraProyecto {
 			hist->diagnostico = diagnostico;
 			hist->tratamiento = descripcion;
 			HospitalData::historialMedico->Add(hist);
+			HospitalData::GuardarDatosJson();
 
 			this->listBoxNotas->Items->Add(nota->fecha + L" - " + nota->profesional);
 			this->richTextBoxDescripcion->Clear();

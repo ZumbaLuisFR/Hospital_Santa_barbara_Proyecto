@@ -27,23 +27,35 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DoctorMainForm.h" />
+    <ClInclude Include="AuthController.h" />
     <ClInclude Include="EmployeeData.h" />
+    <ClInclude Include="horario.h" />
     <ClInclude Include="LoginForm.h" />
+    <ClInclude Include="MedicineDispatchForm.h" />
     <ClInclude Include="MedicalNotesForm.h" />
     <ClInclude Include="NurseMainForm.h" />
     <ClInclude Include="PatientMainForm.h" />
+    <ClInclude Include="PatientController.h" />
     <ClInclude Include="PatientRegistrationForm.h" />
     <ClInclude Include="RoleSelectionForm.h" />
+    <ClInclude Include="StaffRegistrationForm.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DoctorMainForm.cpp" />
     <ClCompile Include="EmployeeData.cpp" />
+    <ClCompile Include="horario.cpp" />
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="NurseMainForm.cpp" />
     <ClCompile Include="PatientMainForm.cpp" />
     <ClCompile Include="PatientRegistrationForm.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="RoleSelectionForm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="hospital_data.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
@@ -153,5 +165,12 @@
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+  </Target>
 </Project>

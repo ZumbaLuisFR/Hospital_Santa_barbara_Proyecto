@@ -3,7 +3,7 @@
 #pragma execution_character_set("utf-8")
 
 #include "EmployeeData.h"
-#include "PatientMainForm.h"
+#include "PatientController.h"
 
 namespace HospitalSantabarbaraProyecto {
 
@@ -301,51 +301,25 @@ namespace HospitalSantabarbaraProyecto {
 			String^ direccion = this->textBoxDireccion->Text->Trim();
 			String^ contrasena = this->textBoxContrasena->Text;
 
-			// Validación de campos vacíos
-			if (nombre->Length == 0 || cedula->Length == 0 || email->Length == 0 || 
-				telefono->Length == 0 || direccion->Length == 0 || contrasena->Length == 0) {
-				this->labelError->Text = L"Por favor complete todos los campos";
+			PatientRegistrationResult^ resultado = PatientController::RegistrarPaciente(
+				pacienteID,
+				nombre,
+				cedula,
+				email,
+				telefono,
+				direccion,
+				contrasena
+			);
+
+			if (!resultado->exitoso) {
+				this->labelError->Text = resultado->mensaje;
 				this->labelError->ForeColor = System::Drawing::Color::Red;
 				return;
 			}
 
-			// Validación de email básica
-			if (!email->Contains(L"@")) {
-				this->labelError->Text = L"Email inválido";
-				this->labelError->ForeColor = System::Drawing::Color::Red;
-				return;
-			}
-
-			// Validación de contraseña
-			if (contrasena->Length < 4) {
-				this->labelError->Text = L"La contraseña debe tener al menos 4 caracteres";
-				this->labelError->ForeColor = System::Drawing::Color::Red;
-				return;
-			}
-
-			// Crear paciente con los datos
-			Patient^ paciente = HospitalData::BuscarPaciente(pacienteID);
-			if (paciente == nullptr) {
-				paciente = gcnew Patient();
-				paciente->id = pacienteID;
-				HospitalData::pacientes->Add(paciente);
-			}
-
-			paciente->nombre = nombre;
-			paciente->email = email;
-			paciente->telefono = telefono;
-			paciente->direccion = direccion;
-			paciente->contrasena = contrasena;
-
-			// Guardar los datos persistentemente
-			HospitalData::GuardarPacientes();
-
-			HospitalData::usuarioActual = pacienteID;
-			HospitalData::rolActual = L"Paciente";
-
-			PatientMainForm^ patientForm = gcnew PatientMainForm();
-			this->Hide();
-			patientForm->Show();
+			MessageBox::Show(L"Registro guardado. Ahora puede iniciar sesión.", L"Registro Completado");
+			this->DialogResult = System::Windows::Forms::DialogResult::OK;
+			this->Close();
 		}
 
 		System::Void buttonCancelar_Click(System::Object^ sender, System::EventArgs^ e) {

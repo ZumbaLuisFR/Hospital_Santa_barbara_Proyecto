@@ -15,10 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AuthController.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
     <ClInclude Include="EmployeeData.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="LoginForm.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="MedicineDispatchForm.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="DoctorMainForm.h">
@@ -30,13 +36,22 @@
     <ClInclude Include="PatientMainForm.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="PatientController.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
     <ClInclude Include="RoleSelectionForm.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="StaffRegistrationForm.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="PatientRegistrationForm.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="MedicalNotesForm.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="horario.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,5 +80,14 @@
     <ClCompile Include="PatientRegistrationForm.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="horario.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="hospital_data.json">
+      <Filter>Archivos de recursos</Filter>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
